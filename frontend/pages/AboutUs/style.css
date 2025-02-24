@@ -1,0 +1,26 @@
+.about-us-page {
+  margin-top: 20px;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-us-developers {
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin-top: 32px;
+  gap: 32px;
+}
+
+/* Responsividade */
+
+/* lg */
+@media (max-width: 1024px) {
+  .about-us-developers {
+    grid-template-columns: repeat(1, 1fr);
+    padding: 0 24px;
+  }
+}

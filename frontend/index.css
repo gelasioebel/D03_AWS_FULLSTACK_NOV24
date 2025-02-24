@@ -1,0 +1,59 @@
+/* Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-lunar: hsla(114, 16%, 24%, 1);
+  --primary-avacado: hsla(83, 18%, 52%, 1);
+  --primary-accent: hsla(61, 48%, 75%, 1);
+  --secondary: hsla(70, 5%, 49%, 1);
+  --white: hsla(0, 0%, 99%, 1);
+  --black: hsla(240, 9%, 13%, 1);
+  --gray: hsla(80, 10%, 94%, 1);
+  --athena-gray: hsla(220, 27%, 98%, 1);
+}
+
+body {
+  background-color: var(--white);
+  color: var(--black);
+}
+
+/* Fonts */
+
+.pacifico {
+  font-family: "Pacifico", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.raleway {
+  font-family: "Raleway", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.eb-garamond {
+  font-family: "EB Garamond", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.lato {
+  font-family: "Lato", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.inter {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+/* Text Colors */
+.text-green {
+  color: var(--primary-avacado);
+}

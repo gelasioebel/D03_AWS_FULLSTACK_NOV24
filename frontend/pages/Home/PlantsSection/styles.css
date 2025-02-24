@@ -1,0 +1,23 @@
+.plants-section {
+  background-color: var(--gray);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 0;
+}
+
+.plants-header {
+  margin-bottom: 24px;
+}
+
+.plants-title {
+  font-size: 64px;
+  font-weight: 700;
+  text-align: center;
+  text-transform: capitalize;
+  color: var(--primary-lunar);
+}
+
+.plants-content {
+  margin-bottom: 32px;
+}

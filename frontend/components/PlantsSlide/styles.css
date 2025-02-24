@@ -1,0 +1,19 @@
+.plants-slide {
+  padding-left: 10rem;
+}
+
+/* Responsividade */
+
+/* lg */
+@media (max-width: 1024px) {
+  .plants-slide {
+    padding: 1.8rem;
+  }
+}
+
+/* sm */
+@media (max-width: 768px) {
+  .plants-slide {
+    padding: 1.8rem;
+  }
+}

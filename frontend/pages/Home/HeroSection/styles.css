@@ -1,0 +1,138 @@
+.hero-section {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--gray);
+  overflow: hidden;
+}
+
+.left-plant {
+  width: fit;
+  position: absolute;
+  left: 0;
+  top: calc(100vh - 450px);
+  mix-blend-mode: luminosity;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  gap: 24px;
+  margin: -10rem 0 0 10rem;
+}
+
+.hero-love {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.love-dash {
+  width: 32px;
+  height: 3px;
+  background-color: var(--black);
+}
+
+.love-text {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.75rem;
+  text-align: center;
+}
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  width: 612px;
+  gap: 12px;
+}
+
+.hero-title {
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 83.52px;
+  color: var(--primary-lunar);
+  text-transform: capitalize;
+}
+
+.hero-subtitle {
+  color: var(--secondary);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24.72px;
+}
+
+.hero-plant {
+  width: 60rem;
+  height: calc(100vh - 90px);
+  object-fit: none;
+  object-position: 60px -130px;
+  mix-blend-mode: luminosity;
+}
+
+/* Responsividade */
+
+/* lg */
+@media (max-width: 1024px) {
+  .hero-section {
+    min-height: calc(100vh - 90px);
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+    gap: 24px;
+    margin: 4rem 0 0 0;
+    padding: 0 1rem;
+  }
+  
+  .hero-text {
+    gap: 24px;
+    align-items: center;
+  }
+  
+  .hero-title {
+    font-size: 3rem;
+    line-height: 3rem;
+    text-align: center;
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .hero-plant {
+    display: none;
+
+  }
+
+  .left-plant {
+    display: none;
+  }
+}
+
+/* sm */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 0 10px;
+  }
+
+  .hero-content {
+    width: 100%;
+    align-items: center;
+  }
+
+  .hero-text {
+    width: 100%;
+    text-align: center;
+  }
+}

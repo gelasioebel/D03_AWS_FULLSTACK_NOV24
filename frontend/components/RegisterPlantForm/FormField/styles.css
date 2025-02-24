@@ -1,0 +1,43 @@
+.input-group-vertical {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  gap: 8px;
+}
+
+.input-group-horizontal {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  gap: 4px;
+}
+
+.input-label {
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 22px;
+  color: var(--black);
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  gap: 4px;
+}
+
+.input-container input, .input-container textarea {
+  outline: none;
+  border: 2px solid var(--gray);
+  border-radius: 4px;
+  padding: 12px;
+  padding-left: 16px;
+  resize: none;
+}
+
+.input-error {
+  color: crimson;
+  font-size: 14px;
+}
