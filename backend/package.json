@@ -1,9 +1,30 @@
 {
-  "name": "Backend Dev",
-  "type": "npm",
-  "package-json": "./backend/package.json",
-  "command": "run",
-  "scripts": ["dev"],
-  "arguments": [],
-  "working-directory": "./backend"
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node server.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@fastify/cors": "^10.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "fastify": "^5.2.0",
+    "sequelize": "^6.37.5",
+    "sqlite3": "^5.1.7",
+    "tsx": "^4.19.2",
+    "yup": "^1.6.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.3",
+    "@types/sequelize": "^4.28.20",
+    "@types/sqlite3": "^3.1.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
 }
