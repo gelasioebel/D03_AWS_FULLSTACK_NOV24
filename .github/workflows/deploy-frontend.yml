@@ -15,35 +15,15 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Check if frontend exists
-        id: check_files
-        run: |
-          if [ -d "frontend" ] && [ -f "frontend/package.json" ]; then
-            echo "Frontend project found. Proceeding with build."
-            echo "frontend_exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "No frontend project found. Creating placeholder."
-            echo "frontend_exists=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Install Dependencies
-        if: steps.check_files.outputs.frontend_exists == 'true'
         run: |
           cd frontend
           npm install
 
       - name: Build
-        if: steps.check_files.outputs.frontend_exists == 'true'
         run: |
           cd frontend
-          REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }} npm run build
-
-      - name: Create placeholder index.html if no frontend
-        if: steps.check_files.outputs.frontend_exists != 'true'
-        run: |
-          echo "Creating placeholder page"
-          mkdir -p temp_build
-          echo "<html><head><title>Sistema de Lojas de Plantas</title><style>body{font-family:Arial,sans-serif;line-height:1.6;max-width:800px;margin:0 auto;padding:20px;}h1{color:#2e7d32;}</style></head><body><h1>Sistema de Lojas de Plantas</h1><p>Bem-vindo ao sistema. Site em construção.</p><p>Projeto desenvolvido como parte do Desafio 03 - AWS Fullstack.</p></body></html>" > temp_build/index.html
+          VITE_API_URL=${{ secrets.REACT_APP_API_URL }} npm run build
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -54,11 +34,5 @@ jobs:
 
       - name: Deploy to S3
         run: |
-          if [ "${{ steps.check_files.outputs.frontend_exists }}" == "true" ]; then
-            echo "Deploying frontend build"
-            cd frontend
-            aws s3 sync build/ s3://${{ secrets.S3_BUCKET }} --delete
-          else
-            echo "Deploying placeholder page"
-            aws s3 sync temp_build/ s3://${{ secrets.S3_BUCKET }} --delete
-          fi
+          cd frontend
+          aws s3 sync dist/ s3://${{ secrets.S3_BUCKET }} --delete

@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: Deploy Backend to EC2
 
 on:
   push:
@@ -15,9 +15,6 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Install Dependencies
-        run: npm install
-
       - name: Create SSH key
         run: |
           mkdir -p ~/.ssh/
@@ -31,13 +28,11 @@ jobs:
           ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'pm2 delete plants-api || true'
           
           # Create app directory if it doesn't exist
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'mkdir -p /home/ec2-user/app'
-          
-          # Copy files
-          scp -i ~/.ssh/deploy.key -r ./* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app
-          
-          # Create database directory with proper permissions
           ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'mkdir -p /home/ec2-user/app/database && chmod 777 /home/ec2-user/app/database'
           
+          # Copy files
+          scp -i ~/.ssh/deploy.key -r ./backend/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app
+          scp -i ~/.ssh/deploy.key -r ./database/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app/database
+          
           # Install and start
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/ec2-user/app && npm install && pm2 start npm --name "plants-api" -- start'
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/ec2-user/app && npm install && pm2 start index.js --name "plants-api"'
