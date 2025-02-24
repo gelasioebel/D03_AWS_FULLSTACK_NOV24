@@ -1,0 +1,40 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Create SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy.key
+          chmod 600 ~/.ssh/deploy.key
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to EC2
+        run: |
+          # Stop any running application
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'pm2 delete plants-api || true'
+          
+          # Create app directory if it doesn't exist
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'mkdir -p /home/ec2-user/app/database && chmod 777 /home/ec2-user/app/database'
+          
+          # Copy files
+          scp -i ~/.ssh/deploy.key -r ./* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app
+          
+          # Install and start
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/ec2-user/app && npm install && pm2 start npm --name "plants-api" -- start'
