@@ -15,8 +15,13 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Check if package.json exists and install dependencies
+        run: |
+          if [ -f "package.json" ]; then
+            npm install
+          else
+            echo "No package.json found, skipping npm install"
+          fi
 
       - name: Create SSH key
         run: |
@@ -36,5 +41,5 @@ jobs:
           # Copy files
           scp -i ~/.ssh/deploy.key -r ./* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app
           
-          # Install and start
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/ec2-user/app && npm install && pm2 start npm --name "plants-api" -- start'
+          # Check if package.json exists and install dependencies
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/ec2-user/app && if [ -f "package.json" ]; then npm install && pm2 start npm --name "plants-api" -- start; else echo "No package.json found, skipping npm install"; fi'
