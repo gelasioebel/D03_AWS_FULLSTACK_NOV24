@@ -3,3 +3,8 @@ check 02
 check 03
 check 04
 check 05
+check 06 {
+git add backend/server.ts
+git commit -m "Teste de deploy automático"
+git push origin master
+}

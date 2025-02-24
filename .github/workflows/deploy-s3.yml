@@ -1,6 +1,0 @@
-- name: Deploy to S3
-  run: |
-    cd frontend
-    for file in $(find dist -type f); do
-      aws s3 cp "$file" "s3://${{ secrets.S3_BUCKET }}/${file#dist/}"
-    done

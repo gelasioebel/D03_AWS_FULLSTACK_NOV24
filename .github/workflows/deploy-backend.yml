@@ -1,8 +1,11 @@
-name: Deploy to EC2
+name: Deploy Backend to EC2
 
 on:
   push:
     branches: [ master ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-backend.yml'
 
 jobs:
   deploy:
@@ -16,7 +19,9 @@ jobs:
           node-version: '18'
 
       - name: Install Dependencies
-        run: npm install
+        run: |
+          cd backend
+          npm install
 
       - name: Create SSH key
         run: |
@@ -25,19 +30,22 @@ jobs:
           chmod 600 ~/.ssh/deploy.key
           ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy to EC2
+      - name: Create database directory
         run: |
-          # Stop any running application
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'pm2 delete plants-api || true'
-          
-          # Create app directory if it doesn't exist
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'mkdir -p /home/ec2-user/app'
-          
-          # Copy files
-          scp -i ~/.ssh/deploy.key -r ./* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app
-          
-          # Create database directory with proper permissions
           ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'mkdir -p /home/ec2-user/app/database && chmod 777 /home/ec2-user/app/database'
-          
-          # Install and start
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/ec2-user/app && npm install && pm2 start npm --name "plants-api" -- start'
+
+      - name: Deploy backend files
+        run: |
+          scp -i ~/.ssh/deploy.key -r backend/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app
+
+      - name: Copy SQL schema files
+        run: |
+          scp -i ~/.ssh/deploy.key -r database/*.sql ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app/database/
+
+      - name: Install and restart service
+        run: |
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/ec2-user/app && npm install && pm2 delete plants-api || true && pm2 start server.ts --name "plants-api" --interpreter ./node_modules/.bin/ts-node'
+
+      - name: Set PM2 to start on reboot
+        run: |
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'pm2 save && sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ec2-user --hp /home/ec2-user'

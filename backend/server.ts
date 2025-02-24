@@ -12,4 +12,6 @@ app.use("/api", route);
 
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
+  // Adicione um log para teste
+  console.log("API Iniciada com sucesso!");
 });

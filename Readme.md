@@ -1,176 +1,85 @@
-# Squard-Desafio2-[Blumen]
+# D03_AWS_FULLSTACK_NOV24
 
-Este repositório contém o desafio 2 da semana 8, onde recriamos um site para uma loja fictícia de plantas chamada Blumen, utilizando **React**, **TypeScript**. O projeto é composto por dois subprojetos: **Backend** (API) e **Frontend** (Web).
+## README.md
 
----
+# Sistema de Lojas de Plantas - Deploy AWS
+**Nome:** [Seu Nome Completo]
 
-## **Sobre o Projeto**
+**Informações de Acesso:**
+- URL da aplicação: http://plants-frontend-[seu-nome].s3-website-[região].amazonaws.com
+- Usuário de teste: admin
+- Senha de teste: admin123
 
-O objetivo do desafio é criar uma aplicação que implemente uma loja virtual de plantas. A aplicação contém funcionalidades como registro de plantas, exibição em carrosséis na página inicial, validação de dados, e um sistema completo de rotas protegidas com integração de autenticação usando **Clerk**. O design é totalmente responsivo e segue o padrão fornecido no **Figma**.
+## Sobre o Projeto
 
-Requisitos implementados:
-- Design responsivo, fiel ao mockup.
-- Rotas protegidas e navegação usando React Router.
-- Persistência de dados em um banco de dados SQLite.
-- Manipulação de formulários com validação com **Yup**.
-- Integração do sistema de autenticação com **Clerk**.
+Este projeto implementa um sistema de loja de plantas com frontend React hospedado no S3 e backend Node.js em instância EC2. O backend utiliza SQLite para o banco de dados. O deploy é automatizado via GitHub Actions.
 
----
+## Arquitetura de Deployment
 
-## **Estrutura do Repositório**
+![Arquitetura de Deployment](https://github.com/[seu-usuario]/D03_AWS_FULLSTACK_NOV24/raw/master/docs/images/deployment-architecture.png)
 
-O repositório possui dois subprojetos organizados da seguinte forma:
+O projeto está organizado da seguinte forma:
+- **Frontend (S3)**: Interface de usuário em React
+- **Backend (EC2)**: API em Node.js com Express
+- **Banco de Dados**: SQLite no mesmo servidor do backend
+- **CI/CD**: GitHub Actions para automação do deployment
 
-```plaintext
-├── backend       # API Backend
-│   ├── src
-│   ├── database            # Banco de dados (SQLite com Sequelize)
-│   ├── routes              # Rotas da aplicação
-│   ├── controllers         # Controladores das requisições
-│   ├── middlewares         # Middleware para validação de dados
-│   └── app.ts              # Configuração principal do Express
-│
-├── database       # Arquivos Sqlite
-│   ├── plantas.db           # Banco de dados SQLite com as tabelas de plantas e categorias.
-│   ├── plantasDB.sql        # Script para criação das tabelas no banco de dados.
-│   └── plantasDBInserts.sql # Script para inserção de dados iniciais no banco de dados.
-├── frontend/       # Frontend do site
-│   ├── src
-│   │   ├── assets          # Imagens e arquivos estáticos
-│   │   ├── components      # Componentes reutilizáveis do site
-│   │   ├── hooks           # Hooks personalizados
-│   │   ├── pages           # Páginas do site (Home, About, Register)
-│   │   ├── router          # Configuração do React Router
-│   │   ├── services        # Comunicação com a API
-│   │   └── app.tsx         # Arquivo principal da aplicação
-│   └── public              # Arquivos públicos do Vite
-│
-├── README.md               # Este arquivo
-├── LICENSE                 # Licença do repositório
-└── .gitignore              # Arquivos ignorados no Git
-```
+## Documentação Detalhada
 
----
+Para informações detalhadas sobre a configuração e o deployment, consulte os seguintes documentos:
 
-## **Tecnologias Utilizadas**
+1. [Criação da Instância EC2 para API](docs/api-instancia.md)
+2. [Deploy da API Node.js](docs/deploy_backend.md)
+3. [Deploy do Frontend React no S3](docs/deploy_frontend.md)
 
-### **Frontend**
-- **React 18** com **TypeScript**: Criação da interface do usuário.
-- **Splide.js**: Carrossel para exibição de plantas.
+## Como Implantar Localmente
 
+### Pré-requisitos
+- Node.js 18.x ou superior
+- npm 8.x ou superior
+- Git
 
-### **Backend**
-- **Node.js** com **Express**: Criação da API.
-- **Sequelize**: ORM para SQLite.
-- **Yup**/**Zod**: Validação dos dados.
-- **TS-Node**: Execução de TypeScript no ambiente Node.js.
+### Passos para execução local
 
-### **Ambas as Partes**
-- **Vite**: Ferramenta de build rápido para o Frontend.
-- **Eslint**: Linter e boa organização do código.
-
----
-
-## **Funcionalidades**
-
-### Requisitos Obrigatórios
-1. **Header e Footer**
-    - Ícone de perfil importado do Clerk.
-    - Links de navegação (Home, Register, About Us).
-    - Responsividade.
-
-2. **Rotas Protegidas**
-    - Using Clerk para autenticação.
-    - Rotas protegidas para acesso apenas por usuários autenticados.
-
-3. **Página Home**
-    - Dois carrosséis:
-        - Plantas normais.
-        - Plantas em promoção (cálculo de desconto automático).
-    - Atualização em tempo real ao cadastrar uma planta.
-
-4. **Página Register**
-    - Formulário validado com campos obrigatórios.
-    - Envio das informações diretamente para o banco de dados.
-    - Registro de novos tipos de plantas.
-
-5. **Página About Us**
-    - Informações sobre os desenvolvedores, seguindo o padrão de design do Figma.
-
-6. **Banco de Dados**
-    - Estrutura JSON para plantas:
-      ```json
-      {
-        "id": 1,
-        "name": "Echinocereus Cactus",
-        "subtitle": "A Majestic Addition to Your Plant Collection",
-        "label": ["indoor", "cactus"],
-        "price": "$139.99",
-        "isInSale": true,
-        "discountPercentage": 20,
-        "features": "Species: Echinocereus spp., Size: Varies, Bloom: ...",
-        "description": "Ladyfinger cactus (Echinocereus pentalophus)...",
-        "imgUrl": "./assets/plant.png"
-      }
-      ```
-    - Tabela separada para tipos de plantas.
-
-7. **Validações**
-    - Todos os campos do formulário de registro.
-    - Salvamento dos dados com validação via middleware.
-
----
-
-## **Passos para Executar**
-
-### **Pré-requisitos**
-- **Node.js v18** ou superior.
-- **NPM** ou **Yarn** para gerenciar pacotes.
-
-### **Clonando o Repositório**
+1. Clone o repositório:
 ```bash
-git clone https://github.com/adriannparanhos/-squad-desafio2-blumen.git
-cd https://github.com/adriannparanhos/-squad-desafio2-blumen.git
+git clone https://github.com/[seu-usuario]/D03_AWS_FULLSTACK_NOV24.git
+cd D03_AWS_FULLSTACK_NOV24
 ```
 
-### **Executando o Backend**
-1. Navegue até o diretório do backend:
-   ```bash
-   cd backend
-   ```
-2. Instale as dependências:
-   ```bash
-   npm install
-   ```
-3. Inicie o servidor:
-   ```bash
-   npm start
-   ```
+2. Execute o backend:
+```bash
+cd backend
+npm install
+npm start
+```
 
-### **Executando o Frontend**
-1. Navegue até o diretório do frontend:
-   ```bash
-   cd frontend
-   ```
-2. Instale as dependências:
-   ```bash
-   npm install
-   ```
-3. Inicie o servidor de desenvolvimento:
-   ```bash
-   npm run dev
-   ```
+3. Execute o frontend em outro terminal:
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
----
+4. Acesse o aplicativo em http://localhost:5173
 
-## **Colaboradores**
-- Estudantes:
-- - Adriann Postigo Paranhos
-- - Gelasio Ebel Junior
-- - Thomas Henrique de Souza Santos
-- - Rodrigo Soares Prazeres
-- Intrutores:
-- - Ariel Souza
-- - Gilberto Medeiros
-- - Lucas Gauto
-- - Raul Rosa
+## Estrutura do Projeto
+
+- `frontend/`: Código fonte do frontend React
+- `backend/`: Código fonte da API Node.js
+- `database/`: Scripts SQL e arquivo do banco de dados
+- `docs/`: Documentação detalhada do deployment
+- `.github/workflows/`: Arquivos de configuração do GitHub Actions para CI/CD
+
+## Implantação na AWS
+
+O projeto está atualmente implantado nos seguintes serviços AWS:
+
+- Frontend: [S3 Bucket - URL pública](http://plants-frontend-[seu-nome].s3-website-[região].amazonaws.com)
+- Backend: [EC2 Instance - API](http://[IP-DA-SUA-EC2]:3000)
+
+## Notas Adicionais
+
+- O banco de dados SQLite está localizado na mesma instância EC2 que a API por simplicidade
+- Os arquivos de configuração do GitHub Actions estão na pasta `.github/workflows/`
+- Os secrets necessários para deployment estão configurados no repositório GitHub
