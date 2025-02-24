@@ -12,6 +12,9 @@ dist/
 .env.test.local
 .env.production.local
 
+# ssh key
+plantas-api.pem
+
 # Build directories
 build/
 dist/
