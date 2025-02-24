@@ -1,11 +1,11 @@
-name: Deploy to EC2
+name: Deploy Frontend
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
-  deploy:
+  build_and_deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -15,31 +15,20 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Check if package.json exists and install dependencies
-        run: |
-          if [ -f "package.json" ]; then
-            npm install
-          else
-            echo "No package.json found, skipping npm install"
-          fi
+      - name: Install Dependencies
+        run: npm install
 
-      - name: Create SSH key
-        run: |
-          mkdir -p ~/.ssh/
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy.key
-          chmod 600 ~/.ssh/deploy.key
-          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+      - name: Build
+        run: npm run build
+        env:
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
 
-      - name: Deploy to EC2
-        run: |
-          # Stop any running application
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'pm2 delete plants-api || true'
-          
-          # Create app directory if it doesn't exist
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'mkdir -p /home/ec2-user/app/database && chmod 777 /home/ec2-user/app/database'
-          
-          # Copy files
-          scp -i ~/.ssh/deploy.key -r ./* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app
-          
-          # Check if package.json exists and install dependencies
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/ec2-user/app && if [ -f "package.json" ]; then npm install && pm2 start npm --name "plants-api" -- start; else echo "No package.json found, skipping npm install"; fi'
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to S3
+        run: aws s3 sync build/ s3://${{ secrets.S3_BUCKET }} --delete
