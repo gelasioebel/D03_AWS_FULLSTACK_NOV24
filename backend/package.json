@@ -1,0 +1,9 @@
+{
+  "name": "Backend Dev",
+  "type": "npm",
+  "package-json": "./backend/package.json",
+  "command": "run",
+  "scripts": ["dev"],
+  "arguments": [],
+  "working-directory": "./backend"
+}

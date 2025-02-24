@@ -1,0 +1,9 @@
+{
+  "name": "Frontend Dev",
+  "type": "npm",
+  "package-json": "./frontend/package.json",
+  "command": "run",
+  "scripts": ["dev"],
+  "arguments": [],
+  "working-directory": "./frontend"
+}
