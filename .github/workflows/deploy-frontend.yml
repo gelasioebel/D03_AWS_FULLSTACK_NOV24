@@ -1,0 +1,72 @@
+name: Deploy Frontend to S3
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Check if frontend exists
+        id: check_files
+        run: |
+          if [ -d "frontend" ] && [ -f "frontend/package.json" ]; then
+            echo "Frontend project found. Proceeding with build."
+            echo "::set-output name=frontend_exists::true"
+          else
+            echo "No frontend project found. Skipping build."
+            echo "::set-output name=frontend_exists::false"
+          fi
+
+      - name: Install Dependencies
+        if: steps.check_files.outputs.frontend_exists == 'true'
+        run: |
+          cd frontend
+          npm install
+
+      - name: Build
+        if: steps.check_files.outputs.frontend_exists == 'true'
+        run: |
+          cd frontend
+          REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }} npm run build
+
+      - name: Configure AWS Credentials
+        if: steps.check_files.outputs.frontend_exists == 'true'
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to S3
+        if: steps.check_files.outputs.frontend_exists == 'true'
+        run: |
+          cd frontend
+          aws s3 sync build/ s3://${{ secrets.S3_BUCKET }} --delete
+
+      - name: Create placeholder index.html if no frontend
+        if: steps.check_files.outputs.frontend_exists == 'false'
+        run: |
+          mkdir -p temp_build
+          echo "<html><head><title>Placeholder Frontend</title></head><body><h1>Placeholder Frontend</h1><p>Frontend em desenvolvimento.</p></body></html>" > temp_build/index.html
+
+      - name: Configure AWS Credentials for placeholder
+        if: steps.check_files.outputs.frontend_exists == 'false'
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy placeholder to S3
+        if: steps.check_files.outputs.frontend_exists == 'false'
+        run: |
+          aws s3 sync temp_build/ s3://${{ secrets.S3_BUCKET }} --delete
