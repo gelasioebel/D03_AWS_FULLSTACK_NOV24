@@ -1,9 +1,10 @@
 {
-  "name": "Frontend Dev",
-  "type": "npm",
-  "package-json": "./frontend/package.json",
-  "command": "run",
-  "scripts": ["dev"],
-  "arguments": [],
-  "working-directory": "./frontend"
+  "name": "plants-frontend",
+  "version": "1.0.0",
+  "description": "Frontend para o sistema de lojas de plantas",
+  "scripts": {
+    "dev": "echo 'Starting dev server'",
+    "build": "echo 'Build completed'"
+  },
+  "dependencies": {}
 }
