@@ -3,7 +3,7 @@ import { Plant, Label, PlantResponse, PlantResquest } from "../types/plant";
 
 const defaultImage = "/images/base-plant.jpg";
 
-export async function getAllPlants(): trPromise<Plant[]> {
+export async function getAllPlants(): Promise<Plant[]> {
   try {
     const res = await api.get<PlantResponse[]>("/api/plantas");
 
