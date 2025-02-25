@@ -1,16 +1,25 @@
+// backend/src/database/database.ts
 import sqlite3 from 'sqlite3';
 import path from 'path';
+import fs from 'fs';
 
-const dbPath = path.resolve(__dirname, 'db.db');
+// Ensure the database directory exists
+const dbDir = path.resolve(process.cwd(), 'database');
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
 
-const db = new sqlite3.Database('db.db', (err) => {
+// Create the database path
+const dbPath = path.resolve(dbDir, 'plants.db');
+
+// Initialize database connection
+const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
-    console.error('Erro ao conectar com o banco de dados', err);
+    console.error('Error connecting to database:', err);
   } else {
-    console.log('Conexão com o banco de dados bem-sucedida!');
+    console.log('Successfully connected to database at:', dbPath);
   }
 });
-
 
 export const initDB = () => {
   const sql = `
@@ -64,38 +73,77 @@ export const initDB = () => {
     CREATE INDEX IF NOT EXISTS idx_plantas_tipo_planta_id ON plantas(tipo_planta_id);
     CREATE INDEX IF NOT EXISTS idx_plantas_esta_em_promocao ON plantas(esta_em_promocao);
     CREATE INDEX IF NOT EXISTS idx_plantas_preco ON plantas(preco);
-
-    -- View para plantas em promoção
-    CREATE VIEW IF NOT EXISTS view_plantas_promocao AS
-    SELECT 
-      p.*,
-      tp.nome as tipo_planta_nome,
-      ROUND(p.preco * (1 - p.porcentagem_desconto/100), 2) as preco_promocional
-    FROM plantas p
-    JOIN tipos_planta tp ON p.tipo_planta_id = tp.id
-    WHERE p.esta_em_promocao = true;
-
-    -- View para relatório de plantas por tipo
-    CREATE VIEW IF NOT EXISTS view_relatorio_plantas_por_tipo AS
-    SELECT 
-      tp.nome as tipo_planta,
-      COUNT(*) as quantidade_plantas,
-      ROUND(AVG(p.preco), 2) as preco_medio,
-      COUNT(CASE WHEN p.esta_em_promocao THEN 1 END) as quantidade_em_promocao
-    FROM tipos_planta tp
-    LEFT JOIN plantas p ON tp.id = p.tipo_planta_id
-    GROUP BY tp.id, tp.nome;
   `;
 
   db.exec(sql, (err) => {
     if (err) {
-      console.error('Erro ao inicializar o banco de dados:', err.message);
+      console.error('Error initializing database:', err.message);
     } else {
-      console.log('Banco de dados inicializado com sucesso.');
+      console.log('Database schema initialized successfully');
+
+      // Insert sample data if tables are empty
+      checkAndInsertSampleData();
     }
   });
 };
 
+const checkAndInsertSampleData = () => {
+  // Check if tipos_planta table is empty
+  db.get('SELECT COUNT(*) as count FROM tipos_planta', [], (err, row) => {
+    if (err) {
+      console.error('Error checking tipos_planta table:', err.message);
+      return;
+    }
+
+    if (row.count === 0) {
+      // Insert sample tipos_planta
+      const tiposSQL = `
+        INSERT INTO tipos_planta (nome) VALUES
+          ('Cactos'),
+          ('Suculentas'),
+          ('Orquídeas'),
+          ('Samambaias'),
+          ('Palmeiras');
+      `;
+
+      db.exec(tiposSQL, (err) => {
+        if (err) {
+          console.error('Error inserting sample tipos_planta:', err.message);
+        } else {
+          console.log('Sample plant types inserted successfully');
+
+          // Now insert sample plantas
+          db.get('SELECT COUNT(*) as count FROM plantas', [], (err, row) => {
+            if (err) {
+              console.error('Error checking plantas table:', err.message);
+              return;
+            }
+
+            if (row.count === 0) {
+              const plantasSQL = `
+                INSERT INTO plantas (nome, subtitulo, etiquetas, preco, esta_em_promocao, porcentagem_desconto, caracteristicas, descricao, url_imagem, tipo_planta_id)
+                VALUES 
+                ('Cacto Mandacaru', 'O clássico cacto brasileiro', '["cacto", "nativo", "decorativo"]', 49.90, false, null, 'Planta resistente, adaptada ao clima seco', 'O Mandacaru é um cacto nativo do Brasil', 'https://example.com/cacto.jpg', 1),
+                ('Orquídea Phalaenopsis', 'A rainha das orquídeas', '["orquídea", "flores", "delicada"]', 89.90, true, 15.00, 'Flores duradouras, ideal para ambientes internos', 'A Phalaenopsis é uma das orquídeas mais populares', 'https://example.com/orquidea.jpg', 3);
+              `;
+
+              db.exec(plantasSQL, (err) => {
+                if (err) {
+                  console.error('Error inserting sample plantas:', err.message);
+                } else {
+                  console.log('Sample plants inserted successfully');
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+};
+
+// Initialize the database
 initDB();
 
+// Export the database connection
 export default db;
