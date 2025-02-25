@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18' # Changed from 22 to 18 for better compatibility
+          node-version: '18'
 
       - name: Install Dependencies
         run: |
@@ -34,13 +34,30 @@ jobs:
         run: |
           ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'mkdir -p /home/ec2-user/app/database && chmod 777 /home/ec2-user/app/database'
 
-      - name: Deploy backend files
+      # Fix: Use tar to avoid recursive copying issues
+      - name: Package and Deploy backend files
         run: |
-          scp -i ~/.ssh/deploy.key -r backend/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app
+          tar -czf backend.tar.gz -C backend .
+          scp -i ~/.ssh/deploy.key backend.tar.gz ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app/
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/ec2-user/app && tar -xzf backend.tar.gz && rm backend.tar.gz'
 
       - name: Copy SQL schema files
         run: |
           scp -i ~/.ssh/deploy.key -r database/*.sql ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app/database/
+
+      # Install system dependencies first
+      - name: Install system dependencies for better-sqlite3
+        run: |
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'sudo yum install -y gcc gcc-c++ make'
+
+      # Setup environment variables before starting the app
+      - name: Setup environment variables
+        run: |
+          echo "Creating .env file..."
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cat > /home/ec2-user/app/.env << EOL
+          PORT=3000
+          # Add other environment variables here
+          EOL'
 
       - name: Install and restart service
         run: |
@@ -50,19 +67,7 @@ jobs:
         run: |
           ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'pm2 save && sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ec2-user --hp /home/ec2-user'
 
-      - name: Install system dependencies for better-sqlite3
-        run: |
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'sudo yum install -y gcc gcc-c++ make'
-
       - name: Test API after deployment
         run: |
           sleep 10 # Give the API time to start
           curl -s http://${{ secrets.HOST }}:3000/api/health || echo "API health check failed"
-
-      - name: Setup environment variables
-        run: |
-          echo "Creating .env file..."
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cat > /home/ec2-user/app/.env << EOL
-          PORT=3000
-          # Add other environment variables here
-          EOL'
