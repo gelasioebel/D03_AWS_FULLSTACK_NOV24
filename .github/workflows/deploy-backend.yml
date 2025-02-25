@@ -3,9 +3,7 @@ name: Deploy Backend to EC2
 on:
   push:
     branches: [ master ]
-    paths:
-      - 'backend/**'
-      - '.github/workflows/deploy-backend.yml'
+    # Removed paths filtering to ensure workflow always runs
 
 jobs:
   deploy:
@@ -16,12 +14,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18'
-
-      - name: Install Dependencies
-        run: |
-          cd backend
-          npm install
+          node-version: '18'  # Using Node.js 18 instead of 16 for better-sqlite3
 
       - name: Create SSH key
         run: |
@@ -30,38 +23,24 @@ jobs:
           chmod 600 ~/.ssh/deploy.key
           ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
-      - name: Create database directory
-        run: |
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'mkdir -p /home/ec2-user/app/database && chmod 777 /home/ec2-user/app/database'
-
-      # Fix: Use tar to avoid recursive copying issues
-      - name: Package and Deploy backend files
-        run: |
-          tar -czf backend.tar.gz -C backend .
-          scp -i ~/.ssh/deploy.key backend.tar.gz ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app/
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/ec2-user/app && tar -xzf backend.tar.gz && rm backend.tar.gz'
-
-      - name: Copy SQL schema files
-        run: |
-          scp -i ~/.ssh/deploy.key -r database/*.sql ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app/database/
-
-      # Install system dependencies first
       - name: Install system dependencies for better-sqlite3
         run: |
           ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'sudo yum install -y gcc gcc-c++ make'
 
-      # Setup environment variables before starting the app
-      - name: Setup environment variables
+      - name: Deploy to EC2
         run: |
-          echo "Creating .env file..."
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cat > /home/ec2-user/app/.env << EOL
-          PORT=3000
-          # Add other environment variables here
-          EOL'
-
-      - name: Install and restart service
-        run: |
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/ec2-user/app && npm install && pm2 delete plants-api || true && pm2 start server.ts --name "plants-api" --interpreter ./node_modules/.bin/ts-node'
+          # Stop any running application
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'pm2 delete plants-api || true'
+          
+          # Create app directory if it doesn't exist
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'mkdir -p /home/ec2-user/app/database && chmod 777 /home/ec2-user/app/database'
+          
+          # Copy files (using the exact same approach that worked before)
+          scp -i ~/.ssh/deploy.key -r ./backend/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app
+          scp -i ~/.ssh/deploy.key -r ./database/*.sql ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app/database
+          
+          # Install and start
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/ec2-user/app && npm install && pm2 start server.ts --name "plants-api" --interpreter ./node_modules/.bin/ts-node'
 
       - name: Set PM2 to start on reboot
         run: |
