@@ -1,8 +1,5 @@
-# D03_AWS_FULLSTACK_NOV24
-
-## README.md
-
 # Sistema de Lojas de Plantas - Deploy AWS
+
 **Nome:** [Seu Nome Completo]
 
 **Informações de Acesso:**
@@ -12,34 +9,69 @@
 
 ## Sobre o Projeto
 
-Este projeto implementa um sistema de loja de plantas com frontend React hospedado no S3 e backend Node.js em instância EC2. O backend utiliza SQLite para o banco de dados. O deploy é automatizado via GitHub Actions.
+Este projeto implementa um sistema de loja online de plantas com:
+- Frontend React hospedado no S3
+- Backend Node.js/Express em uma instância EC2
+- Banco de dados SQLite no mesmo servidor do backend
+- Deploy automatizado usando GitHub Actions
 
-## Arquitetura de Deployment
+## Arquitetura
 
-![Arquitetura de Deployment](https://github.com/[seu-usuario]/D03_AWS_FULLSTACK_NOV24/raw/master/docs/images/deployment-architecture.png)
+![Arquitetura de Deployment](docs/imagens/deployment-architecture.png)
 
-O projeto está organizado da seguinte forma:
-- **Frontend (S3)**: Interface de usuário em React
-- **Backend (EC2)**: API em Node.js com Express
-- **Banco de Dados**: SQLite no mesmo servidor do backend
-- **CI/CD**: GitHub Actions para automação do deployment
+A aplicação consiste em:
+- **Frontend (S3)**: Interface React com Vite
+- **Backend (EC2)**: API REST em Node.js/Express
+- **Banco de Dados**: SQLite no mesmo servidor EC2
+- **CI/CD**: GitHub Actions para deploy automático
 
-## Documentação Detalhada
+## Documentação
 
-Para informações detalhadas sobre a configuração e o deployment, consulte os seguintes documentos:
+Para a configuração e deploy completos, consulte:
 
 1. [Criação da Instância EC2 para API](docs/api-instancia.md)
 2. [Deploy da API Node.js](docs/deploy_backend.md)
 3. [Deploy do Frontend React no S3](docs/deploy_frontend.md)
 
-## Como Implantar Localmente
+## Funcionalidades Principais
+
+- Visualização de catálogo de plantas
+- Detalhes de cada planta
+- Cadastro de novas plantas
+- Carrinho de compras (em desenvolvimento)
+- Filtro por categoria e preço
+- Promoções e descontos
+
+## Tecnologias Utilizadas
+
+### Frontend
+- React 18
+- TypeScript
+- Vite
+- React Router
+- Clerk (autenticação)
+- Axios
+
+### Backend
+- Node.js
+- Express
+- TypeScript
+- SQLite (via better-sqlite3)
+- PM2 (gerenciamento de processos)
+
+### DevOps
+- AWS S3 (hosting de frontend)
+- AWS EC2 (hosting de backend)
+- GitHub Actions (CI/CD)
+
+## Execução Local
 
 ### Pré-requisitos
 - Node.js 18.x ou superior
 - npm 8.x ou superior
 - Git
 
-### Passos para execução local
+### Passos para execução
 
 1. Clone o repositório:
 ```bash
@@ -51,10 +83,10 @@ cd D03_AWS_FULLSTACK_NOV24
 ```bash
 cd backend
 npm install
-npm start
+npm run dev
 ```
 
-3. Execute o frontend em outro terminal:
+3. Em outro terminal, execute o frontend:
 ```bash
 cd frontend
 npm install
@@ -65,21 +97,63 @@ npm run dev
 
 ## Estrutura do Projeto
 
-- `frontend/`: Código fonte do frontend React
-- `backend/`: Código fonte da API Node.js
-- `database/`: Scripts SQL e arquivo do banco de dados
-- `docs/`: Documentação detalhada do deployment
-- `.github/workflows/`: Arquivos de configuração do GitHub Actions para CI/CD
+```
+📦 D03_AWS_FULLSTACK_NOV24
+ ┣ 📂 .github
+ ┃ ┗ 📂 workflows
+ ┃   ┣ 📜 deploy-backend.yml
+ ┃   ┗ 📜 deploy-frontend.yml
+ ┣ 📂 backend
+ ┃ ┣ 📂 src
+ ┃ ┃ ┣ 📂 controller
+ ┃ ┃ ┣ 📂 database
+ ┃ ┃ ┣ 📂 middlewares
+ ┃ ┃ ┗ 📂 routes
+ ┃ ┣ 📜 server.ts
+ ┃ ┗ 📜 package.json
+ ┣ 📂 database
+ ┃ ┣ 📜 plantasDB.sql
+ ┃ ┗ 📜 plantasDBInserts.sql
+ ┣ 📂 docs
+ ┃ ┣ 📂 imagens
+ ┃ ┣ 📜 api-instancia.md
+ ┃ ┣ 📜 deploy_backend.md
+ ┃ ┗ 📜 deploy_frontend.md
+ ┣ 📂 frontend
+ ┃ ┣ 📂 components
+ ┃ ┣ 📂 layouts
+ ┃ ┣ 📂 pages
+ ┃ ┣ 📂 types
+ ┃ ┣ 📂 utils
+ ┃ ┣ 📜 index.html
+ ┃ ┣ 📜 main.tsx
+ ┃ ┗ 📜 package.json
+ ┗ 📜 README.md
+```
 
-## Implantação na AWS
+## Deploy e CI/CD
 
-O projeto está atualmente implantado nos seguintes serviços AWS:
+O projeto utiliza GitHub Actions para deploy automático:
 
-- Frontend: [S3 Bucket - URL pública](http://plants-frontend-[seu-nome].s3-website-[região].amazonaws.com)
-- Backend: [EC2 Instance - API](http://[IP-DA-SUA-EC2]:3000)
+1. Quando há um push na branch main que afeta o frontend, o workflow `deploy-frontend.yml` é acionado, fazendo build e implantação no S3
 
-## Notas Adicionais
+2. Quando há um push na branch main que afeta o backend, o workflow `deploy-backend.yml` é acionado, implantando a API na instância EC2
 
-- O banco de dados SQLite está localizado na mesma instância EC2 que a API por simplicidade
-- Os arquivos de configuração do GitHub Actions estão na pasta `.github/workflows/`
-- Os secrets necessários para deployment estão configurados no repositório GitHub
+Para configuração detalhada, consulte a documentação em `/docs`.
+
+## Acessando a Aplicação
+
+Frontend: http://plants-frontend-[seu-nome].s3-website-[região].amazonaws.com
+
+API: http://[IP-DA-SUA-EC2]:3000/api
+
+## Avaliação e Apresentação
+
+Durante a avaliação, será necessário:
+1. Demonstrar o console AWS com os serviços em execução
+2. Realizar um novo deploy usando apenas a documentação como referência
+3. Mostrar as funcionalidades da aplicação em funcionamento
+
+## Contato
+
+Para dúvidas ou problemas relacionados a este projeto, entre em contato através do e-mail [seu-email@exemplo.com].

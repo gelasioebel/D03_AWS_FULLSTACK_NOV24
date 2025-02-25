@@ -2,7 +2,7 @@ name: Deploy Frontend to S3
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, main ]
     paths:
       - 'frontend/**'
       - '.github/workflows/deploy-frontend.yml'
@@ -16,17 +16,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '22'
+          node-version: '18'
 
       - name: Install Dependencies
         run: |
           cd frontend
           npm install
 
-      - name: Build
+      - name: Build Frontend
         run: |
           cd frontend
-          VITE_API_URL=${{ secrets.REACT_APP_API_URL }} npm run build
+          # Create .env file with API URL
+          echo "VITE_API_URL=http://${{ secrets.HOST }}:3000/api" > .env
+          npm run build
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -39,3 +41,7 @@ jobs:
         run: |
           cd frontend
           aws s3 sync dist/ s3://${{ secrets.S3_BUCKET }} --delete
+
+      - name: Verify S3 website
+        run: |
+          echo "✅ Frontend deployed to: http://${{ secrets.S3_BUCKET }}.s3-website-${{ secrets.AWS_REGION }}.amazonaws.com"

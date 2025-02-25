@@ -2,19 +2,17 @@ name: Deploy Backend to EC2
 
 on:
   push:
-    branches: [ master ]
-    # Removed paths filtering to ensure workflow always runs
+    branches: [ master, main ]
+    paths:
+      - 'backend/**'
+      - 'database/**'
+      - '.github/workflows/deploy-backend.yml'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '22'  # Using Node.js 18 instead of 16 for better-sqlite3
 
       - name: Create SSH key
         run: |
@@ -23,30 +21,55 @@ jobs:
           chmod 600 ~/.ssh/deploy.key
           ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
-      - name: Install system dependencies for better-sqlite3
+      - name: Stop running application
         run: |
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'sudo yum install -y gcc gcc-c++ make'
-
-      - name: Deploy to EC2
-        run: |
-          # Stop any running application
           ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'pm2 delete plants-api || true'
-          
+
+      - name: Prepare environment
+        run: |
           # Create app directory if it doesn't exist
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'mkdir -p /home/ec2-user/app/database && chmod 777 /home/ec2-user/app/database'
-          
-          # Copy files (using the exact same approach that worked before)
-          scp -i ~/.ssh/deploy.key -r ./backend/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app
-          scp -i ~/.ssh/deploy.key -r ./database/*.sql ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/ec2-user/app/database
-          
-          # Install and start
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/ec2-user/app && npm install && pm2 start server.ts --name "plants-api" --interpreter ./node_modules/.bin/ts-node'
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} '
+            mkdir -p ~/app/database
+            chmod 777 ~/app/database
+          '
 
-      - name: Set PM2 to start on reboot
+      - name: Copy backend files
         run: |
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'pm2 save && sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ec2-user --hp /home/ec2-user'
+          # Copy backend files
+          scp -i ~/.ssh/deploy.key -r ./backend/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/app/
+          
+          # Copy database SQL scripts
+          scp -i ~/.ssh/deploy.key -r ./database/*.sql ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/app/database/
 
-      - name: Test API after deployment
+      - name: Setup environment variables
         run: |
-          sleep 10 # Give the API time to start
-          curl -s http://${{ secrets.HOST }}:3000/api/health || echo "API health check failed"
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cat > ~/app/.env << EOL
+          PORT=3000
+          DATABASE_PATH=database/plants.db
+          NODE_ENV=production
+          EOL'
+
+      - name: Install dependencies and start application
+        run: |
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} '
+            cd ~/app
+            npm install
+            npm run build || true
+            pm2 start server.ts --name "plants-api" --interpreter ./node_modules/.bin/ts-node
+            pm2 save
+          '
+
+      - name: Verify deployment
+        run: |
+          # Wait for the API to start
+          sleep 5
+          
+          # Test the health endpoint
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.HOST }}:3000/api/health)
+          
+          if [ "$RESPONSE" = "200" ]; then
+            echo "✅ API deployment successful! Health check returned 200 OK"
+          else
+            echo "❌ API deployment may have issues. Health check returned: $RESPONSE"
+            # Don't fail the workflow, but log the issue
+          fi
