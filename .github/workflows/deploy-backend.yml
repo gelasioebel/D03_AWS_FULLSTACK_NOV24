@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '22'
+          node-version: '18' # Changed from 22 to 18 for better compatibility
 
       - name: Install Dependencies
         run: |
@@ -49,3 +49,20 @@ jobs:
       - name: Set PM2 to start on reboot
         run: |
           ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'pm2 save && sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u ec2-user --hp /home/ec2-user'
+
+      - name: Install system dependencies for better-sqlite3
+        run: |
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'sudo yum install -y gcc gcc-c++ make'
+
+      - name: Test API after deployment
+        run: |
+          sleep 10 # Give the API time to start
+          curl -s http://${{ secrets.HOST }}:3000/api/health || echo "API health check failed"
+
+      - name: Setup environment variables
+        run: |
+          echo "Creating .env file..."
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cat > /home/ec2-user/app/.env << EOL
+          PORT=3000
+          # Add other environment variables here
+          EOL'
