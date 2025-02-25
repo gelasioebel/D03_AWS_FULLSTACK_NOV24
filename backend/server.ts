@@ -1,17 +1,55 @@
-import express from "express";
+import express, { Application } from "express";
 import cors from "cors";
-import route from "./src/routes/route";
+import routes from "./src/routes/route";
+import path from "path";
 
-const app = express();
-const port = process.env.PORT || 3000;
+const CONFIG = {
+  PORT: process.env.PORT || 3000,
+  PUBLIC_DIR: 'public',
+  BASE_ROUTE: '/api',
+  WELCOME_MESSAGE: 'Welcome to the Plants API. Use /api/health to check status.'
+} as const;
 
-app.use(express.json());
-app.use(cors());
+class Server {
+  private app: Application;
 
-app.use("/api", route);
+  constructor() {
+    this.app = express();
+    this.setupMiddleware();
+    this.setupRoutes();
+  }
 
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
-  // Adicione um log para teste
-  console.log("API Iniciada com sucesso!");
-});
+  private setupMiddleware(): void {
+    this.app.use(express.json());
+    this.app.use(cors());
+    this.app.use(express.static(path.join(__dirname, CONFIG.PUBLIC_DIR)));
+  }
+
+  private setupRoutes(): void {
+    this.app.use(CONFIG.BASE_ROUTE, routes);
+    this.app.get("/", (req, res) => {
+      res.send(CONFIG.WELCOME_MESSAGE);
+    });
+  }
+
+  public start(): void {
+    try {
+      this.app.listen(CONFIG.PORT, () => {
+        this.logServerStart();
+      });
+    } catch (error) {
+      console.error('Erro ao iniciar o servidor:', error);
+      process.exit(1);
+    }
+  }
+
+  private logServerStart(): void {
+    const baseUrl = `http://localhost:${CONFIG.PORT}`;
+    console.log(`🚀 Servidor rodando na porta ${CONFIG.PORT}`);
+    console.log('✅ API iniciada com sucesso!');
+    console.log(`🏥 Health check disponível em: ${baseUrl}${CONFIG.BASE_ROUTE}/health`);
+  }
+}
+
+const server = new Server();
+server.start();
