@@ -4,7 +4,7 @@
   "description": "API para sistema de lojas de plantas",
   "main": "index.js",
   "scripts": {
-    "start:backend": "cd backend && npm start",
+    "start": "cd backend && npm start && ts-node server.ts",
     "start:frontend": "cd frontend && npm start",
     "build:backend": "cd backend && npm run build",
     "build:frontend": "cd frontend && npm run build",
