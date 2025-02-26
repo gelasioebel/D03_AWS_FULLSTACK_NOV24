@@ -5,7 +5,7 @@
 echo "==== Plant API Backend Reset Script ===="
 
 # Navigate to the backend directory
-cd /home/ec2-user/app/backend
+cd ~/app/backend || echo "Cannot cd into ~/app/backend"
 # Stop any running server processes
 echo "Stopping any running server processes..."
 if command -v taskkill >/dev/null 2>&1; then
@@ -47,8 +47,11 @@ npm run build || {
 }
 
 # Offer to populate database
-
+echo "Removing db/plantas.db..."
+rm ~/app/db/plantas.db
+sleep 1
 echo "Initializing database..."
+
 npx ts-node ./backend/src/database/initDatabase.ts
 
 echo "Reset completed! You can now start the server with:"
