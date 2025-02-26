@@ -53,10 +53,11 @@ jobs:
           # Make s3deploy.sh executable and run it
           echo "Running s3deply script /frontend/s3deploy.sh..."
           ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/${{ secrets.USERNAME }}/app/frontend && chmod +x ./s3deploy.sh && ./s3deploy.sh'
-          echo "-------------------------- ----------------------- DEPLOY S3"
-          sleep 30
+          echo "*******  BUILDING FRONTEND  *******"
+          sleep 20
+          echo "*******  BUILDING FRONTEND ENDED AFTER 30s SLEEP *******"
           # Wait for s3deploy script to complete (10 seconds)
-          echo "Waiting for s3deploy script to complete..."
+          echo "Waiting 10s for s3deploy script to complete..."
           sleep 10
           
           # Start the application with PM2
