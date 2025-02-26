@@ -45,12 +45,6 @@ log_error() {
 log_step "Verificando pré-requisitos..."
 check_command "aws"
 
-# Verificar se AWS CLI está configurado
-if ! aws sts get-caller-identity &> /dev/null; then
-  log_error "AWS CLI não está configurado corretamente. Execute 'aws configure' primeiro."
-  exit 1
-fi
-
 # Criar build da aplicação
 log_step "Criando build da aplicação..."
 cd "$PROJECT_DIR"
