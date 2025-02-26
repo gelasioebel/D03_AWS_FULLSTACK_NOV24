@@ -52,7 +52,7 @@ rm ~/app/db/plantas.db
 sleep 1
 echo "Initializing database..."
 
-npx ts-node ./backend/src/database/initDatabase.ts
+npx ts-node ./src/database/initDatabase.ts
 
 echo "Reset completed! You can now start the server with:"
 sleep 1
