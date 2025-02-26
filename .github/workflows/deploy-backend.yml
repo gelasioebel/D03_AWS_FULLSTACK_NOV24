@@ -44,7 +44,7 @@ jobs:
           
           # Make reset.sh executable and run it
           echo "Running reset script..."
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/${{ secrets.USERNAME }}/app && chmod +x ./reset.sh && ./reset.sh'
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/${{ secrets.USERNAME }}/app/backend && chmod +x ./reset.sh && ./reset.sh'
           
           # Wait for reset script to complete (60 seconds)
           echo "Waiting for reset script to complete..."

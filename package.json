@@ -4,9 +4,31 @@
   "description": "API para sistema de lojas de plantas",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "ts-node server.ts",
+    "dev": "ts-node-dev --respawn server.ts",
+    "build": "tsc",
+    "lint": "eslint . --ext .ts",
+    "clean": "rm -rf node_modules package-lock.json dist && npm cache clean --force",
+    "clean:db": "rm -rf db/*.db",
+    "reset": "npm run clean && npm install && npm run build",
+    "reset:all": "npm run clean && npm run clean:db && npm install && npm run build"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "description": "Backend API server para loja de plantas",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "sqlite3": "^5.1.7",
+    "ts-node": "^10.9.2",
+    "yup": "^1.6.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.17",
+    "@types/node": "^22.10.3",
+    "@types/sqlite3": "^3.1.11",
+    "typescript": "^5.7.2",
+    "ts-node-dev": "^2.0.0"
+  }
 }

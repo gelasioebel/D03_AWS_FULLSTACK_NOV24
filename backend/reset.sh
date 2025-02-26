@@ -4,6 +4,8 @@
 
 echo "==== Plant API Backend Reset Script ===="
 
+# Navigate to the backend directory
+cd /home/ec2-user/app/backend
 # Stop any running server processes
 echo "Stopping any running server processes..."
 if command -v taskkill >/dev/null 2>&1; then
