@@ -13,8 +13,6 @@
     "@clerk/clerk-react": "^5.21.0",
     "@hookform/resolvers": "^3.9.1",
     "axios": "^1.7.9",
-    "depcheck": "^1.4.7",
-    "frontend": "file:",
     "lucide-react": "^0.469.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -25,9 +23,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/node": "^22.13.5",
     "@types/react": "^18.3.17",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",

@@ -5,7 +5,7 @@ const defaultImage = "/images/base-plant.jpg";
 
 export async function getAllPlants(): Promise<Plant[]> {
   try {
-    const res = await api.get<PlantResponse[]>("/plantas");
+    const res = await api.get<PlantResponse[]>("/api/plantas");
 
     
     const { data } = res;
@@ -34,9 +34,7 @@ export async function getAllPlants(): Promise<Plant[]> {
 
     return plants;
   } catch (error) {
-    console.error("Failed to fetch plants:", error);
     console.error(error);
-    throw new Error("Failed to load plants. Please try again later.");
     return [];
   }
 }
@@ -53,7 +51,7 @@ export async function createPlant(data: PlantResquest) {
     data,
   });
 
-  const res = await api.post("/api/plantas", {
+  const res = await api.post("/api/adicionarPlantas", {
     nome: data.name,
     subtitulo: data.subtitle,
     etiquetas: labels,
