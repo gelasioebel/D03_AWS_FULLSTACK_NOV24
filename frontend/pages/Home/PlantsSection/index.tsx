@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo  } from "react";
 
 import { Plant } from "../../../types/plant";
 import { getAllPlants } from "../../../api/plants";
@@ -6,13 +6,16 @@ import { PlantsSlide } from "../../../components/PlantsSlide";
 import "./styles.css";
 
 export function PlantsSection() {
-  const [plants, setPlants] = useState<Plant[]>([]);
-  
-  useEffect(() => {
-    getAllPlants().then(setPlants);
-  }, []);
+    const [plants, setPlants] = useState<Plant[]>([]);
 
-  const inSalesPlants = plants.filter((plant) => plant.isSale);
+    useEffect(() => {
+        getAllPlants().then(setPlants);
+    }, []);
+
+    const inSalesPlants = useMemo(() =>
+            plants.filter((plant) => plant.isSale),
+        [plants]
+    );
 
   return (
     <section className="plants-section">

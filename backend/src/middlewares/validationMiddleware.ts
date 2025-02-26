@@ -1,16 +1,14 @@
-import * as yup from 'yup';
+// src/validationMiddleware.ts
+import { Request, Response, NextFunction } from 'express';
+import { AnySchema } from 'yup';
 
-export const validationMiddleware = async (data: any) => {
-  const schema = yup.object({
-    tipo: yup.string().required('Tipo é obrigatório'),
-    nome: yup.string().required('Nome é obrigatório'),
-    altura: yup.number().required('Altura é obrigatória').positive('Altura deve ser positiva'),
-  });
-
-  try {
-    await schema.validate(data, { abortEarly: false });
-    return { error: null }; 
-  } catch (err: any) {
-    return { error: err.inner }; 
-  }
+export const validateBody = (schema: AnySchema) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      req.body = await schema.validate(req.body, { abortEarly: false, stripUnknown: true });
+      next();
+    } catch (error: any) {
+      res.status(400).json({ errors: error.errors });
+    }
+  };
 };

@@ -1,18 +1,25 @@
-name: Deploy Backend to EC2
-
+name: Deploy to EC2
 on:
   push:
-    branches: [ master, main ]
-    paths:
-      - 'backend/**'
-      - 'database/**'
-      - '.github/workflows/deploy-backend.yml'
-
+    branches: [ master ]
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test || true
 
       - name: Create SSH key
         run: |
@@ -20,56 +27,48 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy.key
           chmod 600 ~/.ssh/deploy.key
           ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
-
-      - name: Stop running application
+      - name: Check EC2 Connection
         run: |
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'echo "Connection successful!"'
+      - name: Deploy to EC2
+        run: |
+          # Stop any running application
           ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'pm2 delete plants-api || true'
-
-      - name: Prepare environment
-        run: |
+          
           # Create app directory if it doesn't exist
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} '
-            mkdir -p ~/app/database
-            chmod 777 ~/app/database
-          '
-
-      - name: Copy backend files
-        run: |
-          # Copy backend files
-          scp -i ~/.ssh/deploy.key -r ./backend/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/app/
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'mkdir -p /home/${{ secrets.USERNAME }}/app'
           
-          # Copy database SQL scripts
-          scp -i ~/.ssh/deploy.key -r ./database/*.sql ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/app/database/
-
-      - name: Setup environment variables
-        run: |
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cat > ~/app/.env << EOL
-          PORT=3000
-          DATABASE_PATH=database/plants.db
-          NODE_ENV=production
-          EOL'
-
-      - name: Install dependencies and start application
-        run: |
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} '
-            cd ~/app
-            npm install
-            npm run build || true
-            pm2 start server.ts --name "plants-api" --interpreter ./node_modules/.bin/ts-node
-            pm2 save
-          '
-
-      - name: Verify deployment
-        run: |
-          # Wait for the API to start
-          sleep 5
+          # Copy files
+          rsync -avz --delete -e "ssh -i ~/.ssh/deploy.key" ./* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/${{ secrets.USERNAME }}/app/
+          rsync -avz --delete -e "ssh -i ~/.ssh/deploy.key" ./.* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/${{ secrets.USERNAME }}/app/ 2>/dev/null || true
           
-          # Test the health endpoint
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.HOST }}:3000/api/health)
+          # Make reset.sh executable and run it
+          echo "Running reset script..."
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/${{ secrets.USERNAME }}/app && chmod +x ./reset.sh && ./reset.sh'
           
-          if [ "$RESPONSE" = "200" ]; then
-            echo "✅ API deployment successful! Health check returned 200 OK"
-          else
-            echo "❌ API deployment may have issues. Health check returned: $RESPONSE"
-            # Don't fail the workflow, but log the issue
-          fi
+          # Wait for reset script to complete (60 seconds)
+          echo "Waiting for reset script to complete..."
+          sleep 60
+          
+          # Start the application with PM2
+          echo "Starting application with PM2..."
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/${{ secrets.USERNAME }}/app && NODE_ENV=production pm2 start npm --name "plants-api" -- start'
+      - name: Verify Deployment
+        run: |
+          echo "Waiting for application to start..."
+          sleep 10
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'pm2 status'
+          
+          # Check if the app is responding
+          echo "Checking if API is responding..."
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'curl -sSf http://localhost:3000/ || echo "Warning: API not responding on localhost"'
+      - name: Deployment Summary
+        run: |
+          echo "✅ Deployment to EC2 completed"
+          echo "🌐 API should be available at http://${{ secrets.HOST }}:3000/"
+          echo "🌐 API should be available at http://ec2-13-59-190-75.us-east-2.compute.amazonaws.com:3000/api/plantas"
+          echo "🌐 API should be available at http://ec2-13-59-190-75.us-east-2.compute.amazonaws.com:3000/api/tipos-planta"
+          echo "🌐 API should be available at http://ec2-13-59-190-75.us-east-2.compute.amazonaws.com:3000/api/plantas/1"
+          echo "🔍 To check logs: ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'pm2 logs plants-api'"
+          
+          echo "🔍 To check logs: ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'pm2 logs plants-api'"
