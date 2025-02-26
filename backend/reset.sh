@@ -49,7 +49,7 @@ npm run build || {
 # Offer to populate database
 
 echo "Initializing database..."
-npx ts-node src/database/initDatabase.ts
+npx ts-node /home/ec2-user/app/backend/src/database/initDatabase.ts
 
 
 echo "Reset completed! You can now start the server with:"
