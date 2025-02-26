@@ -6,8 +6,8 @@
 
 # Configurações
 BUCKET_NAME="plants-frontend-gelasioebel"
-PROJECT_DIR="$HOME/app/frontend"
-BUILD_DIR="$HOME/app/frontend/dist"
+PROJECT_DIR="/home/ec2-user/app/frontend"
+BUILD_DIR="$PROJECT_DIR/dist"
 AWS_REGION="us-east-2" # Altere para sua região
 
 # Cores para saída
@@ -47,15 +47,16 @@ check_command "aws"
 
 # Criar build da aplicação
 log_step "Criando build da aplicação..."
-cd "$PROJECT_DIR" || echo -e "${RED}Erro: Não foi possível acessar o diretório de PROJECT_DIR.${NC}"
+cd "$PROJECT_DIR" || echo -e "${RED}Erro: Não foi possível acessar o diretório de build.${NC}"
 if ! npm run build; then
   log_error "Falha ao criar o build da aplicação."
   exit 1
 fi
+sleep 20
 log_success "Build concluído com sucesso!"
 
 # Navegar para o diretório de build
-cd "$BUILD_DIR" || echo -e "${RED}Erro: Não foi possível acessar o diretório de BUILD_DIR.${NC}"
+cd "$BUILD_DIR" || echo -e "${RED}Erro: Não foi possível acessar o diretório de build.${NC}"
 if [ ! -f "index.html" ]; then
   log_error "Arquivo index.html não encontrado no diretório de build."
   exit 1
@@ -64,38 +65,43 @@ fi
 # Sincronizar arquivos com o bucket S3
 log_step "Iniciando upload dos arquivos para o bucket S3..."
 
-# Fazendo upload usando put-object individualmente
-log_step "Fazendo upload dos arquivos individualmente..."
-
-# Para arquivos na raiz
-for file in $(find . -maxdepth 1 -type f); do
-  contentType=$(file --mime-type -b "$file")
-  echo "Enviando ${file:2}..."
-  if ! aws s3api put-object --bucket $BUCKET_NAME --key "${file:2}" --body "$file" --content-type "$contentType"; then
-    log_error "Falha ao enviar arquivo: ${file:2}"
-  fi
-done
-
-# Para arquivos na pasta assets
-for file in $(find ./assets -type f 2>/dev/null); do
-  contentType=$(file --mime-type -b "$file")
-  echo "Enviando ${file:2}..."
-  if ! aws s3api put-object --bucket $BUCKET_NAME --key "${file:2}" --body "$file" --content-type "$contentType"; then
-    log_error "Falha ao enviar arquivo: ${file:2}"
-  fi
-done
-
-# Para arquivos na pasta images
-for file in $(find ./images -type f 2>/dev/null); do
-  contentType=$(file --mime-type -b "$file")
-  echo "Enviando ${file:2}..."
-  if ! aws s3api put-object --bucket $BUCKET_NAME --key "${file:2}" --body "$file" --content-type "$contentType"; then
-    log_error "Falha ao enviar arquivo: ${file:2}"
-  fi
-done
-
-cd "$BUILD_DIR" || echo -e "${RED}Erro: Não foi possível acessar o diretório de BUILD_DIR.${NC}"
-aws s3 sync . s3://plants-frontend-gelasioebel
+# Tentar upload usando o comando sync
+log_step "Tentando upload usando aws s3 sync..."
+if ! AWS_OUTPUT=$(aws s3 sync . s3://$BUCKET_NAME 2>&1); then
+  log_warning "Falha ao usar 'aws s3 sync', tentando método alternativo..."
+  
+  # Método alternativo usando put-object individualmente
+  log_step "Fazendo upload dos arquivos individualmente..."
+  
+  # Para arquivos na raiz
+  for file in $(find . -maxdepth 1 -type f); do
+    contentType=$(file --mime-type -b "$file")
+    echo "Enviando ${file:2}..."
+    if ! aws s3api put-object --bucket $BUCKET_NAME --key "${file:2}" --body "$file" --content-type "$contentType" &> /dev/null; then
+      log_error "Falha ao enviar arquivo: ${file:2}"
+    fi
+  done
+  
+  # Para arquivos na pasta assets
+  for file in $(find ./assets -type f 2>/dev/null); do
+    contentType=$(file --mime-type -b "$file")
+    echo "Enviando ${file:2}..."
+    if ! aws s3api put-object --bucket $BUCKET_NAME --key "${file:2}" --body "$file" --content-type "$contentType" &> /dev/null; then
+      log_error "Falha ao enviar arquivo: ${file:2}"
+    fi
+  done
+  
+  # Para arquivos na pasta images
+  for file in $(find ./images -type f 2>/dev/null); do
+    contentType=$(file --mime-type -b "$file")
+    echo "Enviando ${file:2}..."
+    if ! aws s3api put-object --bucket $BUCKET_NAME --key "${file:2}" --body "$file" --content-type "$contentType" &> /dev/null; then
+      log_error "Falha ao enviar arquivo: ${file:2}"
+    fi
+  done
+else
+  log_success "Upload via sync concluído com sucesso!"
+fi
 
 # Configurar website
 log_step "Configurando o bucket como website estático..."
