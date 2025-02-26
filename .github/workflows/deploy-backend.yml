@@ -48,7 +48,7 @@ jobs:
           
           # Wait for reset script to complete (60 seconds)
           echo "Waiting for reset script to complete..."
-          sleep 30
+          sleep 60
           
           # Start the application with PM2
           echo "Starting application with PM2..."

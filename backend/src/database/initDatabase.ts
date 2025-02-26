@@ -292,7 +292,7 @@ export const seedPlantas = (defaultImagePath: string): Promise<void> => {
                             porcentagem_desconto: 10,
                             caracteristicas: "Roseta compacta; Cores variadas; Pouca água",
                             descricao: "A Echeveria é uma suculenta popular conhecida por suas rosetas compactas que podem apresentar tons de azul, rosa e verde. Perfeita para quem busca plantas fáceis de cuidar.",
-                            url_imagem: "https://pt.wikipedia.org/wiki/Echeveria_elegans#/media/Ficheiro:Rosa_de_alabastro_(Echeveria_elegans),_jard%C3%ADn_del_molino,_Sierra_de_San_Felipe,_Set%C3%BAbal,_Portugal,_2012-05-11,_DD_01.JPG",
+                            url_imagem: "https://upload.wikimedia.org/wikipedia/commons/2/27/Rosa_de_alabastro_%28Echeveria_elegans%29%2C_jard%C3%ADn_del_molino%2C_Sierra_de_San_Felipe%2C_Set%C3%BAbal%2C_Portugal%2C_2012-05-11%2C_DD_01.JPG",
                             tipo_planta_id: tipoMap["Suculentas"] || 3
                         },
                         {
@@ -328,7 +328,7 @@ export const seedPlantas = (defaultImagePath: string): Promise<void> => {
                             porcentagem_desconto: null,
                             caracteristicas: "Crescimento vertical; Muito resistente; Flores noturnas",
                             descricao: "O Mandacaru é um cacto nativo do Brasil que pode atingir grandes alturas. Extremamente resistente à seca, precisa de pouca manutenção e pode presentear seu dono com belas flores brancas que se abrem durante a noite.",
-                            url_imagem: "https://pt.wikipedia.org/wiki/Mandacaru#/media/Ficheiro:Cereus_jamacaru.JPG",
+                            url_imagem: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Cereus_jamacaru.JPG",
                             tipo_planta_id: tipoMap["Cactos"] || 2
                         },
                         {
@@ -366,6 +366,78 @@ export const seedPlantas = (defaultImagePath: string): Promise<void> => {
                             descricao: "A Aloe Vera, também conhecida como Babosa, é uma suculenta medicinal famosa por suas propriedades hidratantes e cicatrizantes. Além de decorativa, é útil para pequenos acidentes domésticos e cuidados com a pele.",
                             url_imagem: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Aloe_vera_flower_inset.png",
                             tipo_planta_id: tipoMap["Suculentas"] || 3
+                        },
+                        {
+                            nome: "Alecrim",
+                            subtitulo: "Erva aromática mediterrânea",
+                            etiquetas: "aromática,culinária,sol pleno",
+                            preco: 19.90,
+                            esta_em_promocao: false,
+                            porcentagem_desconto: null,
+                            caracteristicas: "Aroma intenso; Uso culinário; Flores atrativas para polinizadores",
+                            descricao: "O Alecrim é uma erva aromática perene, originária da região mediterrânea. Com aroma intenso e característico, é muito utilizado na culinária e também possui propriedades medicinais. Prefere sol pleno e solo bem drenado, sendo bastante resistente à seca.",
+                            url_imagem: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Rosmarinus_3.JPG",
+                            tipo_planta_id: tipoMap["Ervas Aromáticas"] || 5
+                        },
+                        {
+                            nome: "Lavanda",
+                            subtitulo: "Planta aromática com flores lilás",
+                            etiquetas: "aromática,flores,medicinal",
+                            preco: 28.90,
+                            esta_em_promocao: true,
+                            porcentagem_desconto: 12,
+                            caracteristicas: "Aroma relaxante; Flores atrativas; Resistente à seca",
+                            descricao: "A Lavanda encanta com suas flores lilás e perfume inconfundível. Além de embelezar jardins, é usada em aromaterapia para promover relaxamento. Atrai polinizadores e é fácil de cultivar em locais ensolarados com solo bem drenado.",
+                            url_imagem: "https://upload.wikimedia.org/wikipedia/commons/9/93/Lavandula-angustifolia-flowering.JPG",
+                            tipo_planta_id: tipoMap["Ervas Aromáticas"] || 5
+                        },
+                        {
+                            nome: "Zamioculca",
+                            subtitulo: "Planta resistente de folhas brilhantes",
+                            etiquetas: "interior,baixa manutenção,sombra",
+                            preco: 49.90,
+                            esta_em_promocao: false,
+                            porcentagem_desconto: null,
+                            caracteristicas: "Folhas brilhantes; Extremamente resistente; Pouca água",
+                            descricao: "A Zamioculca, ou ZZ Plant, é famosa por sua resistência em condições adversas. Suas folhas verdes brilhantes crescem em hastes eretas, criando uma silhueta elegante. Ideal para ambientes internos com pouca luz e para quem esquece de regar as plantas.",
+                            url_imagem: "https://upload.wikimedia.org/wikipedia/commons/d/d6/Zamioculcas.jpg",
+                            tipo_planta_id: tipoMap["Plantas de Interior"] || 1
+                        },
+                        {
+                            nome: "Kalanchoe",
+                            subtitulo: "Suculenta florida de cores vibrantes",
+                            etiquetas: "suculenta,flores,colorida",
+                            preco: 21.50,
+                            esta_em_promocao: true,
+                            porcentagem_desconto: 10,
+                            caracteristicas: "Flores duradouras; Cores vibrantes; Fácil cultivo",
+                            descricao: "A Kalanchoe é uma suculenta que se destaca por suas flores pequenas e coloridas que duram várias semanas. Disponível em tons de vermelho, laranja, amarelo e rosa, é perfeita para alegrar ambientes internos e externos com sol filtrado.",
+                            url_imagem: "https://upload.wikimedia.org/wikipedia/commons/b/b2/K_daigremontiana.JPG",
+                            tipo_planta_id: tipoMap["Suculentas"] || 3
+                        },
+                        {
+                            nome: "Begônia Rex",
+                            subtitulo: "Begônia ornamental de folhagem exuberante",
+                            etiquetas: "sombra,colorida,interior",
+                            preco: 34.90,
+                            esta_em_promocao: false,
+                            porcentagem_desconto: null,
+                            caracteristicas: "Folhas coloridas; Padrões únicos; Ambiente úmido",
+                            descricao: "A Begônia Rex é cultivada por sua impressionante folhagem decorativa, com padrões únicos em tons de verde, prata, bordô e rosa. Prefere ambientes sombreados e úmidos, sendo perfeita para decorar cantos especiais da casa.",
+                            url_imagem: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Begonia-6.jpg",
+                            tipo_planta_id: tipoMap["Plantas de Interior"] || 1
+                        },
+                        {
+                            nome: "Bonsai Ficus",
+                            subtitulo: "Miniatura de árvore para decoração",
+                            etiquetas: "bonsai,decorativo,interior",
+                            preco: 89.90,
+                            esta_em_promocao: true,
+                            porcentagem_desconto: 8,
+                            caracteristicas: "Tronco retorcido; Folhas pequenas; Longevidade",
+                            descricao: "O Bonsai de Ficus é uma pequena obra de arte viva, com tronco sinuoso e copa compacta. Combina a elegância da jardinagem tradicional japonesa com a facilidade de cultivo do Ficus. Uma adição sofisticada para mesas, estantes e aparadores.",
+                            url_imagem: "https://upload.wikimedia.org/wikipedia/commons/f/ff/Bonsai_IMG_6404.jpg",
+                            tipo_planta_id: tipoMap["Bonsai"] || 6
                         }
                     ];
 
