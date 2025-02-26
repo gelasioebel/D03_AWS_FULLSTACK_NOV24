@@ -49,8 +49,7 @@ npm run build || {
 # Offer to populate database
 
 echo "Initializing database..."
-npx ts-node ~/app/backend/src/database/initDatabase.ts
-sleep 30
+npx ts-node ./backend/src/database/initDatabase.ts
 
 echo "Reset completed! You can now start the server with:"
 sleep 1
