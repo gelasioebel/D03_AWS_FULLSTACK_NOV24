@@ -306,7 +306,7 @@ export const seedPlantas = (defaultImagePath: string): Promise<void> => {
                             descricao: "O Lírio da Paz é conhecido por suas flores brancas elegantes e capacidade de purificar o ar. É uma ótima opção para quem busca beleza e benefícios para a saúde.",
                             url_imagem: "https://upload.wikimedia.org/wikipedia/commons/5/54/SpathiphyllumWallisii.jpg",
                             tipo_planta_id: tipoMap["Plantas de Interior"] || 1
-                        }
+                        },
                         {
                             nome: "Samambaia Americana",
                             subtitulo: "Planta pendente com folhas rendadas",
