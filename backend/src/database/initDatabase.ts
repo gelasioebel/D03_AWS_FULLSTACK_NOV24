@@ -280,7 +280,7 @@ export const seedPlantas = (defaultImagePath: string): Promise<void> => {
                             porcentagem_desconto: null,
                             caracteristicas: "Baixa manutenção; Tolera ambientes secos; Purifica o ar",
                             descricao: "A Espada de São Jorge é uma das plantas mais resistentes que existem. Ela suporta longos períodos sem água e pouca luz, sendo perfeita para iniciantes ou pessoas que viajam com frequência.",
-                            url_imagem: defaultImagePath,
+                            url_imagem:  "https://upload.wikimedia.org/wikipedia/commons/3/37/Sansevieria_trifasciata_flowers.JPG",
                             tipo_planta_id: tipoMap["Plantas de Interior"] || 1
                         },
                         {
@@ -292,7 +292,7 @@ export const seedPlantas = (defaultImagePath: string): Promise<void> => {
                             porcentagem_desconto: 10,
                             caracteristicas: "Roseta compacta; Cores variadas; Pouca água",
                             descricao: "A Echeveria é uma suculenta popular conhecida por suas rosetas compactas que podem apresentar tons de azul, rosa e verde. Perfeita para quem busca plantas fáceis de cuidar.",
-                            url_imagem: defaultImagePath,
+                            url_imagem: "https://pt.wikipedia.org/wiki/Echeveria_elegans#/media/Ficheiro:Rosa_de_alabastro_(Echeveria_elegans),_jard%C3%ADn_del_molino,_Sierra_de_San_Felipe,_Set%C3%BAbal,_Portugal,_2012-05-11,_DD_01.JPG",
                             tipo_planta_id: tipoMap["Suculentas"] || 3
                         },
                         {
@@ -304,8 +304,68 @@ export const seedPlantas = (defaultImagePath: string): Promise<void> => {
                             porcentagem_desconto: null,
                             caracteristicas: "Flores brancas; Purifica o ar; Pouca luz",
                             descricao: "O Lírio da Paz é conhecido por suas flores brancas elegantes e capacidade de purificar o ar. É uma ótima opção para quem busca beleza e benefícios para a saúde.",
-                            url_imagem: defaultImagePath,
+                            url_imagem: "https://upload.wikimedia.org/wikipedia/commons/5/54/SpathiphyllumWallisii.jpg",
                             tipo_planta_id: tipoMap["Plantas de Interior"] || 1
+                        }
+                        {
+                            nome: "Samambaia Americana",
+                            subtitulo: "Planta pendente com folhas rendadas",
+                            etiquetas: "interior,sombra,umidade",
+                            preco: 32.90,
+                            esta_em_promocao: true,
+                            porcentagem_desconto: 15,
+                            caracteristicas: "Folhas rendadas; Gosta de umidade; Ideal para ambientes internos",
+                            descricao: "A Samambaia Americana é perfeita para decorar ambientes com suas folhas verdes e rendadas. Prefere locais com luz indireta e umidade, sendo ideal para banheiros ou cozinhas.",
+                            url_imagem: "https://www.toothmountainnursery.com/wp-content/uploads/2020/02/boston-fern.jpg",
+                            tipo_planta_id: tipoMap["Plantas de Interior"] || 1
+                        },
+                        {
+                            nome: "Cacto Mandacaru",
+                            subtitulo: "Cacto nativo brasileiro de crescimento vertical",
+                            etiquetas: "cacto,sol pleno,resistente",
+                            preco: 27.50,
+                            esta_em_promocao: false,
+                            porcentagem_desconto: null,
+                            caracteristicas: "Crescimento vertical; Muito resistente; Flores noturnas",
+                            descricao: "O Mandacaru é um cacto nativo do Brasil que pode atingir grandes alturas. Extremamente resistente à seca, precisa de pouca manutenção e pode presentear seu dono com belas flores brancas que se abrem durante a noite.",
+                            url_imagem: "https://pt.wikipedia.org/wiki/Mandacaru#/media/Ficheiro:Cereus_jamacaru.JPG",
+                            tipo_planta_id: tipoMap["Cactos"] || 2
+                        },
+                        {
+                            nome: "Jiboia",
+                            subtitulo: "Trepadeira versátil de folhas variegadas",
+                            etiquetas: "pendente,trepadeira,resistente",
+                            preco: 29.90,
+                            esta_em_promocao: true,
+                            porcentagem_desconto: 5,
+                            caracteristicas: "Folhas variegadas; Adaptável; Fácil propagação",
+                            descricao: "A Jiboia é uma planta extremamente versátil que pode ser cultivada como pendente ou trepadeira. Suas folhas variegadas em tons de verde e amarelo trazem vida a qualquer ambiente, e sua resistência a torna uma opção excelente para iniciantes.",
+                            url_imagem: "https://upload.wikimedia.org/wikipedia/commons/f/fe/Epipremnum_aureum_as_Pothos_aureus.jpg",
+                            tipo_planta_id: tipoMap["Plantas de Interior"] || 1
+                        },
+                        {
+                            nome: "Orquídea Phalaenopsis",
+                            subtitulo: "Orquídea de flores duradouras e elegantes",
+                            etiquetas: "orquídea,flores,presente",
+                            preco: 59.90,
+                            esta_em_promocao: false,
+                            porcentagem_desconto: null,
+                            caracteristicas: "Flores duradouras; Cores variadas; Rebrota facilmente",
+                            descricao: "A Orquídea Phalaenopsis é uma das mais populares por sua beleza e facilidade de cultivo. Suas flores podem durar meses e vêm em diversas cores. Com os cuidados adequados, floresce várias vezes ao ano.",
+                            url_imagem: "https://upload.wikimedia.org/wikipedia/commons/6/6b/Phalaenopsis_schilleriana_toapel.jpg",
+                            tipo_planta_id: tipoMap["Orquídeas"] || 4
+                        },
+                        {
+                            nome: "Aloe Vera",
+                            subtitulo: "Planta medicinal de propriedades hidratantes",
+                            etiquetas: "suculenta,medicinal,sol",
+                            preco: 25.90,
+                            esta_em_promocao: true,
+                            porcentagem_desconto: 8,
+                            caracteristicas: "Propriedades medicinais; Resistente à seca; Fácil propagação",
+                            descricao: "A Aloe Vera, também conhecida como Babosa, é uma suculenta medicinal famosa por suas propriedades hidratantes e cicatrizantes. Além de decorativa, é útil para pequenos acidentes domésticos e cuidados com a pele.",
+                            url_imagem: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Aloe_vera_flower_inset.png",
+                            tipo_planta_id: tipoMap["Suculentas"] || 3
                         }
                     ];
 

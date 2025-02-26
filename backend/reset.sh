@@ -50,8 +50,10 @@ npm run build || {
 
 echo "Initializing database..."
 npx ts-node /home/ec2-user/app/backend/src/database/initDatabase.ts
-
+sleep 30
 
 echo "Reset completed! You can now start the server with:"
+sleep 1
 echo "  npm run dev  (for development with auto-reload)"
 echo "  npm start    (for production mode)"
+#npm start
