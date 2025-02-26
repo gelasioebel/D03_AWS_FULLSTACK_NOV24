@@ -58,7 +58,7 @@ jobs:
           echo "*******  BUILDING FRONTEND ENDED AFTER 30s SLEEP *******"
           # Wait for s3deploy script to complete (10 seconds)
           echo "Waiting 10s for s3deploy script to complete..."
-          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/${{ secrets.USERNAME }}/app/frontend && aws s3 sync dist/ s3://plants-frontend-gelasioebel'
+          ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/${{ secrets.USERNAME }}/app/frontend && "echo $PWD" && aws s3 sync dist/ s3://plants-frontend-gelasioebel'
           sleep 2
           
           # Start the application with PM2
