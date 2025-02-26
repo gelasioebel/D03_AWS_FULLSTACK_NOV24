@@ -7,7 +7,7 @@ import fs from 'fs';
 sqlite3.verbose();
 
 // Garante que o diretório do banco de dados existe
-const dbDir = path.resolve(__dirname, '../../db');
+const dbDir = path.resolve(__dirname, '../../../db');
 if (!fs.existsSync(dbDir)) {
     fs.mkdirSync(dbDir, { recursive: true });
 }
