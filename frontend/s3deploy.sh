@@ -8,7 +8,7 @@
 BUCKET_NAME="plants-frontend-gelasioebel"
 PROJECT_DIR="/home/ec2-user/app/frontend"
 BUILD_DIR="$PROJECT_DIR/dist"
-AWS_REGION="us-east-1" # Altere para sua região
+AWS_REGION="us-east-2" # Altere para sua região
 
 # Cores para saída
 GREEN='\033[0;32m'
@@ -47,15 +47,16 @@ check_command "aws"
 
 # Criar build da aplicação
 log_step "Criando build da aplicação..."
-cd "$PROJECT_DIR"
+cd "$PROJECT_DIR" || echo -e "${RED}Erro: Não foi possível acessar o diretório de PROJECT_DIR.${NC}"
 if ! npm run build; then
   log_error "Falha ao criar o build da aplicação."
   exit 1
 fi
+sleep 20
 log_success "Build concluído com sucesso!"
 
 # Navegar para o diretório de build
-cd "$BUILD_DIR"
+cd "$BUILD_DIR" || echo -e "${RED}Erro: Não foi possível acessar o diretório de BUILD_DIR.${NC}"
 if [ ! -f "index.html" ]; then
   log_error "Arquivo index.html não encontrado no diretório de build."
   exit 1
