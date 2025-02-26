@@ -56,8 +56,3 @@ echo "Reset completed! You can now start the server with:"
 sleep 1
 echo "  npm run dev  (for development with auto-reload)"
 echo "  npm start    (for production mode)"
-cd ~/app/backend/ || exit
-echo "Initializing npm start..."
-npm start
-sleep 30
-cd ~/app || exit
