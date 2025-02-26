@@ -11,6 +11,7 @@ export type Plant = {
   features: string;
   description: string;
   imageUrl: string;
+  typeId: number; // Added plant type ID
 };
 
 export type PlantResponse = {
@@ -24,10 +25,11 @@ export type PlantResponse = {
   caracteristicas: string;
   descricao: string;
   url_imagem: string;
-  tipo_planta_nome: string;
+  tipo_planta_id: number; // Ensure backend provides this field
+  tipo_planta_nome?: string; // Optional field if backend provides it
 };
 
-export type PlantResquest = {
+export type PlantRequest = {
   name: string;
   subtitle: string;
   label: string[];
@@ -35,4 +37,13 @@ export type PlantResquest = {
   discount: number;
   features: string;
   description: string;
+  typeId: number; // Changed from string to number
+  imageUrl?: string; // Made optional
+};
+
+export type PlantType = {
+  id: number;
+  nome: string;
+  created_at?: string;
+  updated_at?: string;
 };

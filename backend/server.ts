@@ -4,7 +4,8 @@ import cors from "cors";
 import router from "./src/routes/route";
 
 // Import do banco já inicializa graças ao initDB() no módulo
-import '/home/ec2-user/app/backend/src/database/database';
+//import '/home/ec2-user/app/backend/src/database/database';
+import './src/database/database';
 
 const app = express();
 const port = process.env.PORT || 3000;

@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2016",
-    "lib": ["ES2015", "DOM"],
     "module": "commonjs",
-    "moduleResolution": "node",
     "rootDir": "./",
     "outDir": "./dist",
     "esModuleInterop": true,

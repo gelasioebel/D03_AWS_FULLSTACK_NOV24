@@ -1,5 +1,27 @@
+.plants-slide-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
 .plants-slide {
   padding-left: 10rem;
+  padding-bottom: 3rem; /* Add space for pagination bullets */
+}
+
+.plants-slide-empty {
+  text-align: center;
+  padding: 2rem;
+  font-family: "Raleway", serif;
+  color: var(--secondary);
+  font-size: 1.2rem;
+}
+
+/* Customize Swiper pagination */
+:root {
+  --swiper-pagination-color: var(--primary-lunar);
+  --swiper-pagination-bullet-inactive-color: var(--gray);
+  --swiper-pagination-bullet-inactive-opacity: 0.5;
 }
 
 /* Responsividade */
@@ -15,5 +37,12 @@
 @media (max-width: 768px) {
   .plants-slide {
     padding: 1.8rem;
+  }
+}
+
+/* xs */
+@media (max-width: 390px) {
+  .plants-slide {
+    padding: 1rem;
   }
 }
