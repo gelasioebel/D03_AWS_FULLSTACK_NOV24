@@ -61,9 +61,9 @@ done
 echo "Depois de 20 segundos TENTANTADO DAR s3 sync"
 cd ~/app/frontend
 "echo $PWD"
-/usr/local/bin/aws s3 sync ./dist s3://d03frontend --acl public-read
+#/usr/local/bin/aws s3 sync ./dist s3://d03frontend --acl public-read
 echo "Aguardando mais 10 segundos TENTANTADO DAR s3 sync"
-for i in {10..1}
+for i in {2..1}
 do
   echo "*******  TENTANTADO DAR s3 sync  --- /usr/local/bin/aws s3 sync ./dist s3://d03frontend --acl public-read ---  ******* ... $i: ..."
   sleep 1
