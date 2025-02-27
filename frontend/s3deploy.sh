@@ -54,6 +54,11 @@ if ! npm run build; then
   exit 1
 fi
 sleep 20
+echo "Depois de 20 segundos TENTANTADO DAR s3 sync"
+aws s3 sync dist/ s3://plants-frontend-gelasioebel
+echo "Aguardando mais 10 segundos TENTANTADO DAR s3 sync"
+sleep 10
+echo "PASSEI SERA?"
 log_success "Build concluído com sucesso!"
 
 exit 0
