@@ -58,9 +58,9 @@ do
   echo "*******  BUILDING FRONTEND  ******* ... $i: ..."
   sleep 1
 done
-echo "Depois de 20 segundos TENTANTADO DAR s3 sync"
-cd ~/app/frontend
-"echo $PWD"
+echo "Depois de 10 segundos TENTANTADO DAR s3 sync"
+#cd ~/app/frontend
+echo "$PWD"
 #/usr/local/bin/aws s3 sync ./dist s3://d03frontend --acl public-read
 echo "Aguardando mais 10 segundos TENTANTADO DAR s3 sync"
 for i in {2..1}
