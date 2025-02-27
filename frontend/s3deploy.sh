@@ -53,11 +53,21 @@ if ! npm run build; then
   log_error "Falha ao criar o build da aplicação."
   exit 1
 fi
-sleep 20
+for i in {10..1}
+do
+  echo "*******  BUILDING FRONTEND  ******* ... $i: ..."
+  sleep 1
+done
 echo "Depois de 20 segundos TENTANTADO DAR s3 sync"
-aws s3 sync dist/ s3://plants-frontend-gelasioebel
+cd ~/app/frontend
+"echo $PWD"
+/usr/local/bin/aws s3 sync ./dist s3://d03frontend --acl public-read
 echo "Aguardando mais 10 segundos TENTANTADO DAR s3 sync"
-sleep 10
+for i in {10..1}
+do
+  echo "*******  TENTANTADO DAR s3 sync  --- /usr/local/bin/aws s3 sync ./dist s3://d03frontend --acl public-read ---  ******* ... $i: ..."
+  sleep 1
+done
 echo "PASSEI SERA?"
 log_success "Build concluído com sucesso!"
 
