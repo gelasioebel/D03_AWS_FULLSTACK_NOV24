@@ -1,9 +1,9 @@
 # Sistema de Lojas de Plantas - Deploy AWS
 
-**Nome:** [Seu Nome Completo]
+**Nome:** Gelasio Ebel Junior github.com/gelasioebel 
 
 **Informações de Acesso:**
-- URL da aplicação: http://plants-frontend-[seu-nome].s3-website-[região].amazonaws.com
+- URL da aplicação:http://d03frontend.s3-website.us-east-2.amazonaws.com/
 - Usuário de teste: admin
 - Senha de teste: admin123
 
@@ -90,7 +90,7 @@ npm run dev
 ```bash
 cd frontend
 npm install
-npm run dev
+npm build
 ```
 
 4. Acesse o aplicativo em http://localhost:5173
@@ -143,7 +143,7 @@ Para configuração detalhada, consulte a documentação em `/docs`.
 
 ## Acessando a Aplicação
 
-Frontend: http://plants-frontend-[seu-nome].s3-website-[região].amazonaws.com
+Frontend: http://d03frontend.s3-website.us-east-2.amazonaws.com/
 
 API: http://[IP-DA-SUA-EC2]:3000/api
 

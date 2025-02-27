@@ -47,19 +47,32 @@ jobs:
           ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/${{ secrets.USERNAME }}/app/backend && chmod +x ./reset.sh && ./reset.sh'
           
           # Wait for reset script to complete (10 seconds)
-          echo "Waiting for reset script to complete..."
-          sleep 10
+          echo "Giving the reset script some time to complete..."
+          for i in {1..10}
+          do
+            echo "Iteration $i: Waiting..."
+            sleep 1
+          done
           
           # Make s3deploy.sh executable and run it
           echo "Running s3deply script /frontend/s3deploy.sh..."
           ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/${{ secrets.USERNAME }}/app/frontend && chmod +x ./s3deploy.sh && ./s3deploy.sh'
           echo "*******  BUILDING FRONTEND  *******"
-          sleep 2
+          for i in {1..10}
+          do
+            echo "*******  BUILDING FRONTEND  ******* $i: Waiting..."
+            sleep 1
+          done
           echo "*******  BUILDING FRONTEND ENDED AFTER 2s SLEEP *******"
-          # Wait for s3deploy script to complete (10 seconds)
+          # Wait for s3deploy script to complete (2 seconds)
           echo "Waiting 2s more for s3deploy script to complete..."
-          #ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd /home/${{ secrets.USERNAME }}/app/frontend && "echo $PWD" && aws s3 sync dist/ s3://plants-frontend-gelasioebel'
-          sleep 2
+          #ssh -i ~/.ssh/deploy.key ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'cd ~/app/frontend && "echo $PWD" && /usr/local/bin/aws s3 sync ./dist s3://d03frontend --acl public-read'
+          for i in {1..20}
+          do
+            echo "*******  TRYING TO DEPLOY FRONTEND  ******* $i: Waiting..."
+            echo "cd ~/app/frontend && "echo $PWD" && /usr/local/bin/aws s3 sync ./dist s3://d03frontend --acl public-read"
+            sleep 1
+          done
           
           # Start the application with PM2
           echo "Starting application with PM2..."
