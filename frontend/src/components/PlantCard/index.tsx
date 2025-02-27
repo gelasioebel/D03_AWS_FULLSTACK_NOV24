@@ -19,33 +19,35 @@ export function PlantCard({ plant }: PlantCardProps) {
   }
 
   return (
-    <div onClick={handleNavigate} className="plant-card">
-      <img
-        src={plant.imageUrl}
-        alt={`${plant.name} image`}
-        className="plant-image"
-      />
-      <div className="plant-content">
-        <div className="plant-header">
-          <p className="plant-name lato">{plant.name}</p>
-          <div className="plant-values">
+      <div onClick={handleNavigate} className="plant-card">
+        <div className="image-container">
+          <img
+              src={plant.imageUrl}
+              alt={`${plant.name} image`}
+              className="plant-image"
+          />
+        </div>
+        <div className="plant-content">
+          <div className="plant-header">
+            <p className="plant-name lato">{plant.name}</p>
+            <div className="plant-values">
             <span className="discounted-price raleway">
               {formatCurrency(discountedPrice)}
             </span>
-            {discountedPrice !== plant.price && (
-              <span className="real-price raleway">
+              {discountedPrice !== plant.price && (
+                  <span className="real-price raleway">
                 {formatCurrency(plant.price)}
               </span>
-            )}
+              )}
+            </div>
           </div>
-        </div>
 
-        <ul className="plant-labels">
-          {plant.label.map((label, index) => (
-            <Badge key={index} title={label} />
-          ))}
-        </ul>
+          <ul className="plant-labels">
+            {plant.label.map((label, index) => (
+                <Badge key={index} title={label} />
+            ))}
+          </ul>
+        </div>
       </div>
-    </div>
   );
 }
